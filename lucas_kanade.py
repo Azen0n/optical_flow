@@ -1,11 +1,9 @@
 import numpy as np
 import cv2
-from numba import njit, prange
 
 from horn_schunck import calc_image_derivatives
 
 
-@njit(parallel=True)
 def lucas_kanade(first_image: np.ndarray, second_image: np.ndarray, kernel_radius: int = 1):
     first_image = cv2.cvtColor(first_image, cv2.COLOR_BGR2GRAY)
     second_image = cv2.cvtColor(second_image, cv2.COLOR_BGR2GRAY)
@@ -14,8 +12,8 @@ def lucas_kanade(first_image: np.ndarray, second_image: np.ndarray, kernel_radiu
     u = np.zeros(first_image.shape)
     v = np.zeros(first_image.shape)
 
-    for i in prange(kernel_radius, first_image.shape[0] - kernel_radius):
-        for j in prange(kernel_radius, first_image.shape[1] - kernel_radius):
+    for i in range(kernel_radius, first_image.shape[0] - kernel_radius):
+        for j in range(kernel_radius, first_image.shape[1] - kernel_radius):
             i_x = dx[i - kernel_radius:i + kernel_radius + 1, j - kernel_radius:j + kernel_radius + 1].flatten()
             i_y = dy[i - kernel_radius:i + kernel_radius + 1, j - kernel_radius:j + kernel_radius + 1].flatten()
             i_t = dt[i - kernel_radius:i + kernel_radius + 1, j - kernel_radius:j + kernel_radius + 1].flatten()
