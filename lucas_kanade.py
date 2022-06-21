@@ -1,3 +1,5 @@
+import argparse
+
 import numpy as np
 import cv2
 
@@ -24,8 +26,21 @@ def lucas_kanade(first_image: np.ndarray, second_image: np.ndarray, kernel_radiu
 
 
 def main():
-    kernel_radius = 1
-    capture = cv2.VideoCapture('video.mp4')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-r', '--radius', help='set kernel radius', type=int)
+    parser.add_argument('-v', '--video', help='set video path', type=str)
+    args = parser.parse_args()
+
+    if args.radius:
+        kernel_radius = args.radius
+    else:
+        kernel_radius = 1
+
+    if args.video:
+        capture = cv2.VideoCapture(args.video)
+    else:
+        capture = cv2.VideoCapture('video.mp4')
+
     while True:
         _, first_frame = capture.read()
         _, second_frame = capture.read()

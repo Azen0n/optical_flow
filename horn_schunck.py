@@ -1,7 +1,8 @@
+import argparse
+
 import numpy as np
 from scipy.ndimage import convolve
 import cv2
-from matplotlib import pyplot as plt
 
 
 def horn_schunck(first_image: np.ndarray, second_image: np.ndarray,
@@ -51,18 +52,30 @@ def calc_image_derivatives(first_image: np.ndarray, second_image: np.ndarray) ->
     return dx, dy, dt
 
 
-def single():
-    first_image = cv2.imread('first.jpg')
-    second_image = cv2.imread('second.jpg')
-    u, v = horn_schunck(first_image, second_image, 90, 2)
-    plt.imshow(u + v, cmap='gray')
-    plt.show()
-
-
 def main():
-    alpha = 20
-    number_of_iterations = 2
-    capture = cv2.VideoCapture('video.mp4')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-a', '--alpha', help='set regularization constant. Larger values lead to a smoother flow',
+                        type=float)
+    parser.add_argument('-i', '--iterations', help='set number of iterations for laplacian approximation',
+                        type=int)
+    parser.add_argument('-v', '--video', help='set video path', type=str)
+    args = parser.parse_args()
+
+    if args.alpha:
+        alpha = args.alpha
+    else:
+        alpha = 20
+
+    if args.video:
+        capture = cv2.VideoCapture(args.video)
+    else:
+        capture = cv2.VideoCapture('video.mp4')
+
+    if args.iterations:
+        number_of_iterations = args.iterations
+    else:
+        number_of_iterations = 2
+
     while True:
         _, first_frame = capture.read()
         _, second_frame = capture.read()
